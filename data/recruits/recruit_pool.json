@@ -1,0 +1,74 @@
+[
+  {
+    "id": "hana",
+    "name": "Hana",
+    "background": "Underground courier and alley-runner who learned to read motion before intent.",
+    "level": 3,
+    "stats": {"power": 43, "guard": 48, "speed": 86, "technique": 79, "will": 72, "focus": 68},
+    "aptitudes": {"pawn": 61, "rook": 28, "knight": 93, "bishop": 67, "queen": 81, "king": 39},
+    "predispositions": ["street", "aggressive", "adaptive", "underdog"],
+    "experiences": ["rejected_qualifier", "street_league"],
+    "traits": ["fast_learner", "pressure_focus"],
+    "relationships": {"ren": 22}
+  },
+  {
+    "id": "ren",
+    "name": "Ren",
+    "background": "Self-taught counter specialist who has spent years on unsanctioned boards.",
+    "level": 4,
+    "stats": {"power": 55, "guard": 57, "speed": 78, "technique": 82, "will": 76, "focus": 61},
+    "aptitudes": {"pawn": 70, "rook": 41, "knight": 88, "bishop": 74, "queen": 72, "king": 51},
+    "predispositions": ["street", "aggressive", "self_taught", "underdog"],
+    "experiences": ["rejected_qualifier", "street_league"],
+    "traits": ["counter_reader"],
+    "relationships": {"hana": 24}
+  },
+  {
+    "id": "goro",
+    "name": "Goro",
+    "background": "Former arena professional whose reputation outlived his last contract.",
+    "level": 7,
+    "stats": {"power": 84, "guard": 89, "speed": 42, "technique": 69, "will": 90, "focus": 54},
+    "aptitudes": {"pawn": 66, "rook": 96, "knight": 31, "bishop": 40, "queen": 46, "king": 82},
+    "predispositions": ["disciplined", "protective", "veteran"],
+    "experiences": ["regional_final", "career_injury"],
+    "traits": ["anchor", "mentor"],
+    "relationships": {}
+  },
+  {
+    "id": "mira",
+    "name": "Mira",
+    "background": "A quiet scout with formal academy training and an instinct for diagonal control.",
+    "level": 5,
+    "stats": {"power": 49, "guard": 51, "speed": 72, "technique": 91, "will": 67, "focus": 88},
+    "aptitudes": {"pawn": 57, "rook": 36, "knight": 70, "bishop": 95, "queen": 84, "king": 53},
+    "predispositions": ["disciplined", "analytical", "adaptive"],
+    "experiences": ["academy_league"],
+    "traits": ["field_reader", "catalyst"],
+    "relationships": {}
+  },
+  {
+    "id": "kael",
+    "name": "Kael",
+    "background": "Independent duelist whose strongest results come when separated from the formation.",
+    "level": 6,
+    "stats": {"power": 76, "guard": 58, "speed": 83, "technique": 80, "will": 75, "focus": 62},
+    "aptitudes": {"pawn": 49, "rook": 24, "knight": 82, "bishop": 56, "queen": 94, "king": 44},
+    "predispositions": ["loner", "aggressive", "independent"],
+    "experiences": ["solo_circuit"],
+    "traits": ["isolation_bonus"],
+    "relationships": {}
+  },
+  {
+    "id": "sora",
+    "name": "Sora",
+    "background": "Monastery-trained support specialist looking for a first professional board.",
+    "level": 2,
+    "stats": {"power": 38, "guard": 61, "speed": 58, "technique": 73, "will": 84, "focus": 92},
+    "aptitudes": {"pawn": 72, "rook": 54, "knight": 48, "bishop": 90, "queen": 62, "king": 78},
+    "predispositions": ["disciplined", "protective", "patient"],
+    "experiences": ["monastery_trials"],
+    "traits": ["stabilizer"],
+    "relationships": {}
+  }
+]
