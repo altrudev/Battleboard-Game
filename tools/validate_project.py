@@ -3,7 +3,7 @@ import json,re,sys
 root=Path(__file__).resolve().parents[1]
 errors=[]
 project=(root/'project.godot').read_text()
-if 'config/version="0.4.2"' not in project: errors.append('project version is not 0.4.2')
+if 'config/version="0.4.3"' not in project: errors.append('project version is not 0.4.3')
 recruits=json.loads((root/'data/recruits/recruit_pool.json').read_text())
 if len(recruits)<12: errors.append('expected at least 12 recruit profiles')
 roles={'king','queen','rook','bishop','knight','pawn'}
@@ -31,6 +31,11 @@ def _arg_count(arg_text):
     return len([x for x in arg_text.split(',') if x.strip()])
 for path in root.rglob('*.gd'):
     text=path.read_text()
+    funcs=set(re.findall(r'^func\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(',text,re.M))
+    bare_callbacks=re.findall(r'\.connect\(\s*([A-Za-z_][A-Za-z0-9_]*)',text)
+    for callback in bare_callbacks:
+        if callback.startswith('_') and callback not in funcs:
+            errors.append(f'undefined signal callback {callback} in {path.relative_to(root)}')
     m=re.search(r'^class_name\s+(\w+)',text,re.M)
     for fn,args in re.findall(r'^func\s+(_\w+)\s*\(([^)]*)\)',text,re.M):
         if fn in virtual_arity and _arg_count(args) != virtual_arity[fn]:
@@ -59,8 +64,13 @@ if boot_script.exists():
         if forbidden in boot_text: errors.append(f'boot script must remain runtime-independent; found {forbidden}')
     for required_token in ['ResourceLoader.load','runtime_ready','STARTUP HAS NOT COMPLETED']:
         if required_token not in boot_text: errors.append(f'boot diagnostics missing {required_token}')
+board_rules=(root/'addons/battleboard_engine/runtime/board_rules.gd').read_text()
+if 'var c := origin + d' in board_rules or 'for d in [Vector2i' in board_rules:
+    errors.append('board_rules contains unsafe Variant-based vector inference seen in Godot 4.7.1 runtime')
+for token in ['Array[Vector2i]','var cell: Vector2i','var other: String']:
+    if token not in board_rules: errors.append(f'board_rules explicit typing regression: missing {token}')
 if errors:
     print('FAIL')
     for e in errors: print('-',e)
     sys.exit(1)
-print(f'PASS: {len(recruits)} recruits, {len(opponents)}-fighter qualifier, {len(classes)} named classes, Chapter One demo surfaces')
+print(f'PASS: {len(recruits)} recruits, {len(opponents)}-fighter qualifier, {len(classes)} named classes, Godot callback/parser preflight')
