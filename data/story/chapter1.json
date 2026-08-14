@@ -1,0 +1,15 @@
+{
+  "opening": [
+    {"speaker":"NARRATOR","title":"CHAPTER ONE · NO BOARD, NO ENTRY","text":"The Grand Battle Chess registration hall is louder than the arenas outside. Every Boardmaster in line has a crest, a sponsor, and fighters waiting behind them. You have an application."},
+    {"speaker":"REGISTRATION CLERK","title":"GRAND TOURNAMENT INTAKE","text":"Board name? Registered King? Licensed roster? ...None of them? Then there is nothing for me to enter. Bronze circuit takes eight fighters. Come back when you have a board."},
+    {"speaker":"GORO","title":"OUTSIDE THE HALL","text":"Don't chase sixteen names before you can command eight. Bronze Board is enough to get through the first gate. I know five people willing to stand with you. The last three have to be your choices."},
+    {"speaker":"MIRA","title":"THE OLD TRAINING YARD","text":"We scout first. Not for the biggest number—for the missing shape. Queen, Rook, Pawn. Then train them where the board actually needs them."},
+    {"speaker":"YOU","title":"FIRST OBJECTIVE","text":"Eight positions. One qualifier. Build the board, earn the licence, and make them remember the name they refused to register."}
+  ],
+  "victory": [
+    {"speaker":"NARRATOR","title":"THE FIRST STAMP","text":"The local arena goes quiet before the result board changes. Then the Bronze seal appears beside your name."},
+    {"speaker":"GORO","title":"AFTER THE QUALIFIER","text":"Now you're registered. That is not the same thing as being ready. From here, every board has a history—and every fighter you put on yours starts writing one."},
+    {"speaker":"MIRA","title":"NEXT CIRCUIT","text":"The city league opens next. Full scouting reports, rival Boardmasters, contracts, injuries that last, and enough attention that people will start trying to take our fighters from us."},
+    {"speaker":"NARRATOR","title":"DEMO COMPLETE","text":"Chapter One complete. Your roster, relationships, training choices, injuries, and result remain in the save. The next build continues from this board."}
+  ]
+}

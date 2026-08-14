@@ -3,7 +3,7 @@ import json,re,sys
 root=Path(__file__).resolve().parents[1]
 errors=[]
 project=(root/'project.godot').read_text()
-if 'config/version="0.3.0"' not in project: errors.append('project version is not 0.3.0')
+if 'config/version="0.4.0"' not in project: errors.append('project version is not 0.4.0')
 recruits=json.loads((root/'data/recruits/recruit_pool.json').read_text())
 if len(recruits)<12: errors.append('expected at least 12 recruit profiles')
 roles={'king','queen','rook','bishop','knight','pawn'}
@@ -22,13 +22,18 @@ for path in root.rglob('*.gd'):
     if m:
         if m.group(1) in classes: errors.append(f'duplicate class {m.group(1)}')
         classes[m.group(1)]=str(path.relative_to(root))
-    for bad in ['keycoe','B_face','_constrain(initiator)_']:
+    for bad in ['keycoe','B_face','_constrain(initiator)_','\\n\\t']:
         if bad in text: errors.append(f'known corruption token {bad} in {path}')
-required=['CampaignState','QualificationRules','TrainingManager','ProgressionManager','SaveManager','MatchController','CampaignUI','BBTacticalPlanner']
+required=['CampaignState','QualificationRules','TrainingManager','ProgressionManager','SaveManager','MatchController','CampaignUI','BBTacticalPlanner','DemoDirector','DemoTitleScreen','StoryOverlay','TutorialOverlay']
 for name in required:
     if name not in classes: errors.append(f'missing class {name}')
+story_path=root/'data/story/chapter1.json'
+if not story_path.exists(): errors.append('missing Chapter One story data')
+else:
+    story=json.loads(story_path.read_text())
+    if 'opening' not in story or 'victory' not in story: errors.append('story sequences incomplete')
 if errors:
     print('FAIL')
     for e in errors: print('-',e)
     sys.exit(1)
-print(f'PASS: {len(recruits)} recruits, {len(opponents)}-fighter qualifier, {len(classes)} named classes')
+print(f'PASS: {len(recruits)} recruits, {len(opponents)}-fighter qualifier, {len(classes)} named classes, Chapter One demo surfaces')
