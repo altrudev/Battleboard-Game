@@ -1,6 +1,6 @@
 [application]
 config/name="Battleboard"
-config/version="0.4.2"
+config/version="0.4.3"
 run/main_scene="res://scenes/boot.tscn"
 
 [display]
