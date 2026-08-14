@@ -5,8 +5,8 @@ ROOT = Path(__file__).resolve().parents[1]
 errors = []
 
 project = (ROOT / 'project.godot').read_text()
-if 'config/version="0.4.0"' not in project:
-    errors.append('demo project version must be 0.4.0')
+if 'config/version="0.4.1"' not in project:
+    errors.append('demo project version must be 0.4.1')
 
 story = json.loads((ROOT / 'data/story/chapter1.json').read_text())
 if len(story.get('opening', [])) < 5:
@@ -59,6 +59,12 @@ else:
         errors.append('Emi must remain a strong Pawn demo option')
     if recruits['kael']['aptitudes']['queen'] < 85:
         errors.append('Kael must remain a strong Queen demo option')
+
+# Parser-risk regression: Object._set is a reserved virtual callback and may not be
+# reused as an arbitrary helper with a different signature.
+demo_director = (ROOT / 'systems/demo_director.gd').read_text()
+if 'func _set(' in demo_director:
+    errors.append('DemoDirector must not shadow Godot Object._set')
 
 if errors:
     print('FAIL')
