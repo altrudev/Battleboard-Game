@@ -1,7 +1,7 @@
 [application]
 config/name="Battleboard"
-config/version="0.4.1"
-run/main_scene="res://scenes/main.tscn"
+config/version="0.4.2"
+run/main_scene="res://scenes/boot.tscn"
 
 [display]
 window/size/viewport_width=1280

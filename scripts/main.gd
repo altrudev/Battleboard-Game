@@ -1,6 +1,8 @@
 extends Node3D
 
-const VERSION := "0.4.1-chapter-one-demo"
+signal runtime_ready
+
+const VERSION := "0.4.2-chapter-one-demo"
 
 var campaign := CampaignState.new()
 var recruitment := RecruitmentManager.new()
@@ -14,7 +16,6 @@ var encounter := EncounterController.new()
 var match_controller := MatchController.new()
 var camera := Camera3D.new()
 var ui := CampaignUI.new()
-var title_screen := DemoTitleScreen.new()
 var story := StoryOverlay.new()
 var tutorial := TutorialOverlay.new()
 
@@ -27,7 +28,12 @@ func _ready() -> void:
     _setup_demo_surfaces()
     ui.visible = false
     tutorial.hide_guide()
-    title_screen.setup(saves.has_save())
+    var session_mode := str(ProjectSettings.get_setting("battleboard/session_mode", "new"))
+    if session_mode == "continue" and saves.has_save():
+        _continue_demo()
+    else:
+        _new_demo()
+    runtime_ready.emit()
 
 func _setup_systems() -> void:
     for node in [campaign, recruitment, roster, training, progression, saves, demo, board, encounter, match_controller]:
@@ -84,13 +90,10 @@ func _setup_ui() -> void:
     ui.save_requested.connect(_save)
 
 func _setup_demo_surfaces() -> void:
-    add_child(title_screen)
     add_child(story)
     add_child(tutorial)
     story.setup()
     tutorial.setup()
-    title_screen.new_demo_requested.connect(_new_demo)
-    title_screen.continue_requested.connect(_continue_demo)
     story.sequence_finished.connect(_on_story_finished)
 
 func _new_demo() -> void:

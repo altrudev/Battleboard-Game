@@ -3,7 +3,7 @@ import json,re,sys
 root=Path(__file__).resolve().parents[1]
 errors=[]
 project=(root/'project.godot').read_text()
-if 'config/version="0.4.1"' not in project: errors.append('project version is not 0.4.1')
+if 'config/version="0.4.2"' not in project: errors.append('project version is not 0.4.2')
 recruits=json.loads((root/'data/recruits/recruit_pool.json').read_text())
 if len(recruits)<12: errors.append('expected at least 12 recruit profiles')
 roles={'king','queen','rook','bishop','knight','pawn'}
@@ -16,10 +16,6 @@ for row in opponents: counts[row['role']]+=1
 expected={'king':1,'queen':1,'rook':1,'bishop':1,'knight':1,'pawn':3}
 if counts!=expected: errors.append(f'opponent roles invalid: {counts}')
 classes={}
-
-# Godot virtual callback names must either be intentional overrides with compatible
-# arity or not be used as private helpers. This catches collisions such as a helper
-# named _set(), which Object reserves for property handling.
 virtual_arity={
     '_get':1,'_get_property_list':0,'_iter_get':1,'_iter_init':1,'_iter_next':1,
     '_notification':1,'_property_can_revert':1,'_property_get_revert':1,'_set':2,
@@ -29,14 +25,10 @@ virtual_arity={
     '_unhandled_input':1,'_unhandled_key_input':1,
     '_draw':0,'_gui_input':1,'_get_minimum_size':0,
 }
-# _init is intentionally excluded: Godot explicitly permits constructor parameters.
-
 def _arg_count(arg_text):
     arg_text=arg_text.strip()
-    if not arg_text:
-        return 0
+    if not arg_text: return 0
     return len([x for x in arg_text.split(',') if x.strip()])
-
 for path in root.rglob('*.gd'):
     text=path.read_text()
     m=re.search(r'^class_name\s+(\w+)',text,re.M)
@@ -56,6 +48,17 @@ if not story_path.exists(): errors.append('missing Chapter One story data')
 else:
     story=json.loads(story_path.read_text())
     if 'opening' not in story or 'victory' not in story: errors.append('story sequences incomplete')
+boot_scene=root/'scenes/boot.tscn'
+boot_script=root/'scripts/boot.gd'
+if not boot_scene.exists(): errors.append('missing independent boot scene')
+if not boot_script.exists(): errors.append('missing independent boot script')
+if 'run/main_scene="res://scenes/boot.tscn"' not in project: errors.append('project must launch through boot scene')
+if boot_script.exists():
+    boot_text=boot_script.read_text()
+    for forbidden in ['CampaignState','RecruitmentManager','BBProfile','BoardController','EncounterController']:
+        if forbidden in boot_text: errors.append(f'boot script must remain runtime-independent; found {forbidden}')
+    for required_token in ['ResourceLoader.load','runtime_ready','STARTUP HAS NOT COMPLETED']:
+        if required_token not in boot_text: errors.append(f'boot diagnostics missing {required_token}')
 if errors:
     print('FAIL')
     for e in errors: print('-',e)

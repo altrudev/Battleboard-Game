@@ -5,8 +5,8 @@ ROOT = Path(__file__).resolve().parents[1]
 errors = []
 
 project = (ROOT / 'project.godot').read_text()
-if 'config/version="0.4.1"' not in project:
-    errors.append('demo project version must be 0.4.1')
+if 'config/version="0.4.2"' not in project:
+    errors.append('demo project version must be 0.4.2')
 
 story = json.loads((ROOT / 'data/story/chapter1.json').read_text())
 if len(story.get('opening', [])) < 5:
@@ -24,13 +24,15 @@ required_files = [
     'scripts/demo_title_screen.gd',
     'scripts/story_overlay.gd',
     'scripts/tutorial_overlay.gd',
+    'scripts/boot.gd',
+    'scenes/boot.tscn',
 ]
 for rel in required_files:
     if not (ROOT / rel).exists():
         errors.append(f'missing demo surface: {rel}')
 
 main = (ROOT / 'scripts/main.gd').read_text()
-for token in ['_new_demo', '_continue_demo', 'story.show_sequence("opening")', 'story.show_sequence("victory")']:
+for token in ['runtime_ready', '_new_demo', '_continue_demo', 'story.show_sequence("opening")', 'story.show_sequence("victory")']:
     if token not in main:
         errors.append(f'main demo flow missing {token}')
 
@@ -60,11 +62,16 @@ else:
     if recruits['kael']['aptitudes']['queen'] < 85:
         errors.append('Kael must remain a strong Queen demo option')
 
-# Parser-risk regression: Object._set is a reserved virtual callback and may not be
-# reused as an arbitrary helper with a different signature.
-demo_director = (ROOT / 'systems/demo_director.gd').read_text()
+demo_director=(ROOT/'systems/demo_director.gd').read_text()
 if 'func _set(' in demo_director:
     errors.append('DemoDirector must not shadow Godot Object._set')
+
+boot = (ROOT / 'scripts/boot.gd').read_text() if (ROOT / 'scripts/boot.gd').exists() else ''
+if 'run/main_scene="res://scenes/boot.tscn"' not in project:
+    errors.append('demo must launch through diagnostic boot scene')
+for token in ['ResourceLoader.load', 'runtime_ready', 'STARTUP HAS NOT COMPLETED']:
+    if token not in boot:
+        errors.append(f'boot flow missing {token}')
 
 if errors:
     print('FAIL')
@@ -72,4 +79,4 @@ if errors:
         print('-', error)
     raise SystemExit(1)
 
-print('PASS: Chapter One demo contract, title/new/continue/story/tutorial flow, v4 save migration, affordable 3-recruit completion path')
+print('PASS: Chapter One demo contract, diagnostic boot, story/tutorial flow, v4 save migration, affordable 3-recruit completion path')
