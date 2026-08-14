@@ -2,7 +2,7 @@ extends Node3D
 
 signal runtime_ready
 
-const VERSION := "0.4.2-chapter-one-demo"
+const VERSION := "0.4.3-chapter-one-demo"
 
 var campaign := CampaignState.new()
 var recruitment := RecruitmentManager.new()
