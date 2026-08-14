@@ -3,7 +3,7 @@ import json,re,sys
 root=Path(__file__).resolve().parents[1]
 errors=[]
 project=(root/'project.godot').read_text()
-if 'config/version="0.4.0"' not in project: errors.append('project version is not 0.4.0')
+if 'config/version="0.4.1"' not in project: errors.append('project version is not 0.4.1')
 recruits=json.loads((root/'data/recruits/recruit_pool.json').read_text())
 if len(recruits)<12: errors.append('expected at least 12 recruit profiles')
 roles={'king','queen','rook','bishop','knight','pawn'}
@@ -16,9 +16,33 @@ for row in opponents: counts[row['role']]+=1
 expected={'king':1,'queen':1,'rook':1,'bishop':1,'knight':1,'pawn':3}
 if counts!=expected: errors.append(f'opponent roles invalid: {counts}')
 classes={}
+
+# Godot virtual callback names must either be intentional overrides with compatible
+# arity or not be used as private helpers. This catches collisions such as a helper
+# named _set(), which Object reserves for property handling.
+virtual_arity={
+    '_get':1,'_get_property_list':0,'_iter_get':1,'_iter_init':1,'_iter_next':1,
+    '_notification':1,'_property_can_revert':1,'_property_get_revert':1,'_set':2,
+    '_to_string':0,'_validate_property':1,
+    '_enter_tree':0,'_exit_tree':0,'_get_configuration_warnings':0,'_input':1,
+    '_physics_process':1,'_process':1,'_ready':0,'_shortcut_input':1,
+    '_unhandled_input':1,'_unhandled_key_input':1,
+    '_draw':0,'_gui_input':1,'_get_minimum_size':0,
+}
+# _init is intentionally excluded: Godot explicitly permits constructor parameters.
+
+def _arg_count(arg_text):
+    arg_text=arg_text.strip()
+    if not arg_text:
+        return 0
+    return len([x for x in arg_text.split(',') if x.strip()])
+
 for path in root.rglob('*.gd'):
     text=path.read_text()
     m=re.search(r'^class_name\s+(\w+)',text,re.M)
+    for fn,args in re.findall(r'^func\s+(_\w+)\s*\(([^)]*)\)',text,re.M):
+        if fn in virtual_arity and _arg_count(args) != virtual_arity[fn]:
+            errors.append(f'Godot virtual callback signature collision {fn} in {path.relative_to(root)}: expected {virtual_arity[fn]} args, found {_arg_count(args)}')
     if m:
         if m.group(1) in classes: errors.append(f'duplicate class {m.group(1)}')
         classes[m.group(1)]=str(path.relative_to(root))
