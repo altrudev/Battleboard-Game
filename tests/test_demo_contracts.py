@@ -5,8 +5,8 @@ ROOT = Path(__file__).resolve().parents[1]
 errors = []
 
 project = (ROOT / 'project.godot').read_text()
-if 'config/version="0.4.2"' not in project:
-    errors.append('demo project version must be 0.4.2')
+if 'config/version="0.4.3"' not in project:
+    errors.append('demo project version must be 0.4.3')
 
 story = json.loads((ROOT / 'data/story/chapter1.json').read_text())
 if len(story.get('opening', [])) < 5:
@@ -62,7 +62,7 @@ else:
     if recruits['kael']['aptitudes']['queen'] < 85:
         errors.append('Kael must remain a strong Queen demo option')
 
-demo_director=(ROOT/'systems/demo_director.gd').read_text()
+demo_director = (ROOT / 'systems/demo_director.gd').read_text()
 if 'func _set(' in demo_director:
     errors.append('DemoDirector must not shadow Godot Object._set')
 
@@ -73,10 +73,22 @@ for token in ['ResourceLoader.load', 'runtime_ready', 'STARTUP HAS NOT COMPLETED
     if token not in boot:
         errors.append(f'boot flow missing {token}')
 
+campaign_ui = (ROOT / 'scripts/campaign_ui.gd').read_text()
+for callback in ['_request_start_match', '_request_save', '_request_recruit']:
+    if f'func {callback}(' not in campaign_ui:
+        errors.append(f'CampaignUI callback missing: {callback}')
+
+board_rules = (ROOT / 'addons/battleboard_engine/runtime/board_rules.gd').read_text()
+if 'var c := origin + d' in board_rules or 'for d in [Vector2i' in board_rules:
+    errors.append('board_rules contains Godot 4.7.1 unsafe Variant vector inference')
+for token in ['Array[Vector2i]', 'var cell: Vector2i', 'var other: String']:
+    if token not in board_rules:
+        errors.append(f'board_rules explicit typing missing: {token}')
+
 if errors:
     print('FAIL')
     for error in errors:
         print('-', error)
     raise SystemExit(1)
 
-print('PASS: Chapter One demo contract, diagnostic boot, story/tutorial flow, v4 save migration, affordable 3-recruit completion path')
+print('PASS: v0.4.3 Chapter One demo contract, diagnostic boot, runtime callback/parser regressions, v4 save migration')
