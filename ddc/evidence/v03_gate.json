@@ -1,0 +1,34 @@
+{
+  "contract": "battleboard.v0.3.first-qualifier",
+  "evidence_schema": 1,
+  "source_commit": "fe90f7d18a40d2f245356b494eb9e7377e99f483",
+  "engine_commit": "2a85af2156728cf63e2e41f47290d34a9b8c0715",
+  "godot_release": "4.7.1-stable",
+  "godot_upstream_commit": "a13da4feb8d8aefc283c3763d33a2f170a18d541",
+  "static_gate": {
+    "status": "pass",
+    "checks": [
+      "12 recruit profiles expose all six board-role aptitudes",
+      "starting stable is intentionally 5/8",
+      "missing qualifier roles are Queen, Rook and Pawn",
+      "Kael + Taro + Emi canonical completion path costs 444 crowns <= 520 starting crowns",
+      "Ashline Gate Board contains exactly eight fighters in Bronze role composition",
+      "save schema is version 3",
+      "opponent planner is deterministic for unchanged state",
+      "authoritative board state remains separate from presentation"
+    ]
+  },
+  "github_blobs": {
+    "project.godot": "d843a19dea5eed2dddcc7af8475bd80880e7855b",
+    "data/recruits/recruit_pool.json": "dea814abf24614729daa1a9c80e1109cb85c4008",
+    "data/opponents/qualifier_gate.json": "fed682ef0a32cbd0bd25d3f508e9092438aeb751",
+    "addons/battleboard_engine/runtime/tactical_planner.gd": "38df8e6757024ae2f17e099e084a3a11b2b6b22a",
+    "systems/match_controller.gd": "e44b9ea55ba90673ba6ca0948a105051321728f1",
+    "systems/save_manager.gd": "3ede7d0f68b48c8425d0b81b9cf7d8852eaa879f",
+    "scripts/campaign_ui.gd": "b465be94e0a16d787fbadad2e4e65c3df4b62804"
+  },
+  "runtime_execution": {
+    "status": "not_run",
+    "reason": "Pinned Godot executable is not available in the current sandbox and outbound binary download is unavailable. First Godot 4.7.1-stable editor/headless smoke test remains required."
+  }
+}
