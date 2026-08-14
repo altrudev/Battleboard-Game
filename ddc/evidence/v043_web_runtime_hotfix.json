@@ -1,0 +1,33 @@
+{
+  "contract": "battleboard.v0.4.3.web-runtime-hotfix",
+  "evidence_schema": 1,
+  "source_commit_before_evidence": "1b408f6b10bfa5005ccba2578080f6bb99ff7544",
+  "engine_board_rules_commit": "01558249c06b3a0b8db6e5a4a06603387681b6ee",
+  "runtime": "Godot 4.7.1-stable web editor",
+  "observed_runtime_failures": [
+    {
+      "path": "addons/battleboard_engine/runtime/board_rules.gd",
+      "line": 24,
+      "message": "Cannot infer the type of variable because the value does not have a set type",
+      "root_cause": "Vector2i arithmetic was inferred from an untyped Array/loop Variant",
+      "fix": "Explicit Vector2i/String/int types and typed Array[Vector2i] movement collections"
+    },
+    {
+      "path": "scripts/campaign_ui.gd",
+      "message": "_request_start_match, _request_save and _request_recruit not declared",
+      "root_cause": "The v0.4.2 distributed ZIP was built from a stale local source snapshot even though the repository already contained the callbacks",
+      "fix": "Restore callbacks in the tested package base and add provenance-locked packaging from a clean Git tree"
+    }
+  ],
+  "non_blocking_web_editor_output": [
+    "TCP/debug adapter port creation failure in the browser-hosted editor"
+  ],
+  "regressions_added": [
+    "Godot virtual callback signature scan",
+    "undefined bare signal callback scan",
+    "board_rules unsafe Variant vector inference scan",
+    "CampaignUI required callback contract",
+    "clean-Git provenance-locked local packaging with BUILD_PROVENANCE.json and per-file SHA-256 hashes"
+  ],
+  "status": "source_fixed_runtime_retest_required"
+}
