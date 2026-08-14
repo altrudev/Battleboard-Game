@@ -1,0 +1,86 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource path="res://scripts/boot.gd" type="Script" id="1_boot"]
+
+[node name="Boot" type="Node"]
+script = ExtResource("1_boot")
+
+[node name="BootUI" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="Root" type="Control" parent="BootUI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="BootUI/Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.025, 0.035, 0.05, 1)
+
+[node name="Center" type="CenterContainer" parent="BootUI/Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="BootUI/Root/Center"]
+custom_minimum_size = Vector2(620, 430)
+layout_mode = 2
+
+[node name="Box" type="VBoxContainer" parent="BootUI/Root/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Kicker" type="Label" parent="BootUI/Root/Center/Panel/Box"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "ALTRU.DEV // BATTLEBOARD"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="BootUI/Root/Center/Panel/Box"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 42
+text = "BATTLEBOARD"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="BootUI/Root/Center/Panel/Box"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "CHAPTER ONE DEMO · NO BOARD, NO ENTRY"
+horizontal_alignment = 1
+
+[node name="Premise" type="Label" parent="BootUI/Root/Center/Panel/Box"]
+layout_mode = 2
+text = "Recruit. Train. Assemble eight positions.\nEvery contested square becomes a fight you control."
+horizontal_alignment = 1
+
+[node name="NewDemo" type="Button" parent="BootUI/Root/Center/Panel/Box"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+text = "NEW DEMO"
+
+[node name="Continue" type="Button" parent="BootUI/Root/Center/Panel/Box"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+text = "CONTINUE"
+
+[node name="Status" type="Label" parent="BootUI/Root/Center/Panel/Box"]
+layout_mode = 2
+text = "BOOTING…"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Version" type="Label" parent="BootUI/Root/Center/Panel/Box"]
+layout_mode = 2
+text = "v0.4.2 · Godot 4.7.1"
+horizontal_alignment = 1
