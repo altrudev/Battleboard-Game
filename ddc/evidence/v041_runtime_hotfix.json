@@ -1,0 +1,28 @@
+{
+  "contract": "battleboard.v0.4.1.runtime-hotfix",
+  "source_commit_before_evidence": "3d88f2b3df936410c692ee9ba279b80f854740fb",
+  "runtime": {
+    "engine": "Godot 4.7.1-stable",
+    "status": "runtime_defect_observed_and_fixed",
+    "observed_error": "DemoDirector helper _set(stage, hint, step, gate_open) collided with Object._set(StringName, Variant) -> bool and failed GDScript parsing.",
+    "root_cause": "Private helper used a reserved Godot virtual callback name with an incompatible signature.",
+    "fix": "Renamed helper to _make_stage and updated all call sites."
+  },
+  "prevention": {
+    "validator": "tools/validate_project.py",
+    "regression_test": "tests/test_demo_contracts.py",
+    "checks": [
+      "Godot Object virtual callback arity",
+      "Godot Node virtual callback arity",
+      "common CanvasItem/Control callback arity",
+      "explicit regression preventing DemoDirector func _set helper"
+    ]
+  },
+  "local_gate": {
+    "validate_project": "pass",
+    "qualification_contracts": "pass",
+    "demo_contracts": "pass",
+    "ddc_gate": "pass"
+  },
+  "next_runtime_requirement": "Run v0.4.1 in Godot 4.7.1 and continue fixing any parser/runtime defect until the complete Chapter One flow reaches the title screen, HQ, qualifier, encounter, and post-match return without debugger errors."
+}
