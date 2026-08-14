@@ -2,7 +2,7 @@
 
 Battleboard is a tactical board-management RPG where board movement determines the challenge, but contested squares are resolved through direct third-person control.
 
-## v0.4 demo
+## v0.4.1 demo
 
 **Chapter One: No Board, No Entry** turns the technical prototype into a guided first-session experience:
 
@@ -16,5 +16,9 @@ Battleboard is a tactical board-management RPG where board movement determines t
 - direct-control contested squares and visible ally resonance support
 - XP, relationships, injuries, rewards and persistent save
 - Chapter One ending after the first qualifier win
+
+### v0.4.1 hotfix
+
+The first real Godot 4.7.1 editor smoke test exposed a parser failure caused by a DemoDirector helper named `_set`, which collided with Godot `Object._set(StringName, Variant) -> bool`. The helper was renamed and project validation now checks Godot virtual callback signatures so this class of engine-name collision fails validation before packaging.
 
 Target runtime: Godot 4.7.1-stable.
