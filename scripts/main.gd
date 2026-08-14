@@ -1,6 +1,6 @@
 extends Node3D
 
-const VERSION := "0.4.0-chapter-one-demo"
+const VERSION := "0.4.1-chapter-one-demo"
 
 var campaign := CampaignState.new()
 var recruitment := RecruitmentManager.new()
