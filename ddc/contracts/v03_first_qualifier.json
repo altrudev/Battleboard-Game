@@ -1,0 +1,15 @@
+{
+  "contract": "battleboard.v0.3.first-qualifier",
+  "schema": 1,
+  "invariants": [
+    "Bronze board requires exactly 8 assigned fighters",
+    "Role composition is King 1, Queen 1, Rook 1, Bishop 1, Knight 1, Pawn 3",
+    "Starting stable is intentionally incomplete at 5 assigned fighters",
+    "A viable Queen, Rook and Pawn recruitment path is affordable from starting crowns",
+    "Qualifier opponent uses the same 8-role composition",
+    "Authoritative board state remains separate from presentation",
+    "Automated board planning is deterministic for an unchanged state",
+    "Campaign save schema is versioned as 3",
+    "GitHub Actions are not required for validation or release"
+  ]
+}

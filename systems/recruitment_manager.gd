@@ -9,7 +9,8 @@ var recruited_profiles: Dictionary = {}
 
 func load_pool(path := "res://data/recruits/recruit_pool.json") -> void:
 	available.clear()
-	var file := FileAccess.open(path, FileAccess.READ)
+	recruited_profiles.clear()
+	var file := FileAccess.open(path,FileAccess.READ)
 	if file == null:
 		push_error("Recruit pool could not be opened: %s" % path)
 		return
@@ -23,8 +24,7 @@ func load_pool(path := "res://data/recruits/recruit_pool.json") -> void:
 	pool_changed.emit()
 
 func recruit(profile_id: String) -> BBProfile:
-	if not available.has(profile_id):
-		return null
+	if not available.has(profile_id): return null
 	var profile: BBProfile = available[profile_id]
 	available.erase(profile_id)
 	recruited_profiles[profile_id] = profile
@@ -32,8 +32,16 @@ func recruit(profile_id: String) -> BBProfile:
 	pool_changed.emit()
 	return profile
 
+func import_recruited(profile: BBProfile) -> void:
+	available.erase(profile.profile_id)
+	recruited_profiles[profile.profile_id] = profile
+	pool_changed.emit()
+
 func candidates() -> Array[BBProfile]:
 	var result: Array[BBProfile] = []
-	for value in available.values():
-		result.append(value)
+	for value in available.values(): result.append(value)
+	result.sort_custom(func(a: BBProfile,b: BBProfile): return a.display_name < b.display_name)
 	return result
+
+func recruit_cost(profile: BBProfile) -> int:
+	return 60 + profile.level * 22
