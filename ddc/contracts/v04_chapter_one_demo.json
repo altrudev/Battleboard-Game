@@ -1,0 +1,14 @@
+{
+  "contract": "battleboard.v0.4.chapter-one-demo",
+  "requirements": [
+    "title screen provides New Demo and Continue",
+    "opening story explains the no-board rejection and Bronze eight-position requirement",
+    "new campaign starts with five assigned fighters",
+    "player must recruit to reach an eight-fighter stable",
+    "player must complete at least one role-training session before qualifier unlock",
+    "legal Bronze Board is King 1, Queen 1, Rook 1, Bishop 1, Knight 1, Pawn 3",
+    "qualifier uses tactical board turns and direct-control contested squares",
+    "winning qualifier triggers Chapter One ending sequence",
+    "save schema v4 preserves demo story/progression flags and accepts v3 migration"
+  ]
+}

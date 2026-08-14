@@ -1,0 +1,38 @@
+{
+  "contract": "battleboard.v0.4.chapter-one-demo",
+  "generated_utc": "2026-08-14T01:54:31.359794+00:00",
+  "pass": true,
+  "results": [
+    {
+      "command": "validate_project.py",
+      "returncode": 0,
+      "stdout": "PASS: 12 recruits, 8-fighter qualifier, 27 named classes, Chapter One demo surfaces",
+      "stderr": ""
+    },
+    {
+      "command": "test_qualification_contracts.py",
+      "returncode": 0,
+      "stdout": "PASS qualification contracts",
+      "stderr": ""
+    },
+    {
+      "command": "test_demo_contracts.py",
+      "returncode": 0,
+      "stdout": "PASS: Chapter One demo contract, title/new/continue/story/tutorial flow, v4 save migration, affordable 3-recruit completion path",
+      "stderr": ""
+    }
+  ],
+  "sha256": {
+    "project.godot": "6bfaacef028c1b574c6e427b0ffbcb89eb83bb7a164e4bed0c2fadd6ff0487af",
+    "data/recruits/recruit_pool.json": "fe820f91e483b34cc0b1942ed27e56973ca5bf34bac7def8890777b5a1aeaa33",
+    "data/opponents/qualifier_gate.json": "a7dff92f389596538326f1654dd86824a590e7746a47ce9be046e23f4a15ede5",
+    "data/story/chapter1.json": "8254612e15b5999246f9a84e1415934fc2408660e7f2a1b0be8046efb8c3cd5d",
+    "systems/demo_director.gd": "d796526dc816112255ccdafca3733e9135e7af131c3f4ba4b2f4db09c1d6d195",
+    "systems/match_controller.gd": "e59d9c6452e135823dad5464ed52417c6b64315ae78cef2ede58380e6e174304",
+    "systems/save_manager.gd": "c3b062318d002b85c4ee86449bac770ea8a766e12a1df3d6b696dc5376e052c1",
+    "scripts/main.gd": "ed12dfec1d57a72de970162a43b605ebff1dea190f6bc5a0d10ba055edebb26c",
+    "scripts/story_overlay.gd": "20ef2c1067c62254f54ba18a8cf3fc9276a0af646260081b3bcec4a9cfa82f9a",
+    "addons/battleboard_engine/runtime/tactical_planner.gd": "e207f5aefc353a2650071c56e35437752b8f4d320bcda7ecfa783868af71971b"
+  },
+  "runtime_execution": "not_available_in_current_sandbox"
+}
