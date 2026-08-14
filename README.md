@@ -1,27 +1,11 @@
 # Battleboard Game
 
-Battleboard is a tactical action RPG about assembling a tournament board from recruits whose position aptitude, predispositions, history and relationships affect how they perform together.
+Battleboard is a tactical action RPG in which a board move can become a direct third-person contest between persistent fighters.
 
-## v0.2 visual proof
+## v0.3 — First Qualification Match
 
-This build connects the management layer to the signature visual loop:
+The current prototype includes scouting and recruiting, a persistent stable, six-position fighter aptitude, role-specific training, affinity/predisposition/relationship chemistry, an 8-fighter Bronze qualification board, deterministic rival board AI, seamless tactical-board to direct-control encounters, visible affinity support interventions, XP/level progression/team bonding/injury history, local campaign save/load, and the first Local Qualifier opponent board.
 
-**recruit → assign board role → deploy → tactical move → challenge → direct third-person control → affinity intervention → tactical resolution**
+Open `project.godot` with Godot 4.7.1-stable. The engine addon is embedded under `addons/battleboard_engine` for a self-contained game checkout.
 
-### Run
-
-1. Install Godot `4.7.1-stable`.
-2. Open `project.godot`.
-3. Run the main scene.
-4. Select **Hana** and then **Iron Ward** on the highlighted hostile Knight destination.
-5. In direct control use:
-   - `WASD` — move
-   - left click — strike
-   - `Q` — focus technique
-   - `E` — parry
-   - `Shift` — evade
-6. Ren begins adjacent to Hana and can trigger the first visible affinity intervention.
-
-## What is intentionally prototype-quality
-
-The articulated characters are generated from primitive meshes so mechanics, camera, silhouettes and animation-state timing can be proven before final Blender/glTF assets exist. Their public presentation API is designed to survive the asset replacement.
+See `docs/V0.3_FIRST_QUALIFIER.md` for the playable loop.
