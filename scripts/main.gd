@@ -1,5 +1,7 @@
 extends Node3D
 
+const VERSION := "0.2.0-visual-proof"
+
 var recruitment := RecruitmentManager.new()
 var roster := RosterManager.new()
 var board := BoardController.new()
@@ -8,7 +10,6 @@ var camera := Camera3D.new()
 var roster_label := Label.new()
 var detail_label := Label.new()
 var candidate_box := VBoxContainer.new()
-var roster_box := VBoxContainer.new()
 var encounter_label := Label.new()
 
 func _ready() -> void:
@@ -18,25 +19,6 @@ func _ready() -> void:
 	recruitment.load_pool()
 	_seed_demo_board()
 	_refresh_ui()
-
-func _setup_world() -> void:
-	var light := DirectionalLight3D.new()
-	light.rotation_degrees = Vector3(-55,-30,0)
-	light.shadow_enabled = true
-	add_child(light)
-	var environment := WorldEnvironment.new()
-	var env := Environment.new()
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color("#111720")
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color("#b9c6d8")
-	env.ambient_light_energy = 0.62
-	environment.environment = env
-	add_child(environment)
-	camera.position = Vector3(0,20,18)
-	camera.fov = 48
-	camera.look_at(Vector3.ZERO, Vector3.UP)
-	add_child(camera)
 
 func _setup_systems() -> void:
 	add_child(recruitment)
@@ -48,15 +30,100 @@ func _setup_systems() -> void:
 	board.selection_changed.connect(_on_selection)
 	board.challenge_requested.connect(_on_challenge)
 	encounter.resolved.connect(_on_encounter_resolved)
-	encounter.status_changed.connect(func(text): encounter_label.text = text)
+	encounter.status_changed.connect(func(text: String): encounter_label.text = text)
+
+func _setup_world() -> void:
+	var key := DirectionalLight3D.new()
+	key.rotation_degrees = Vector3(-58, -28, 0)
+	key.light_energy = 1.05
+	key.shadow_enabled = true
+	add_child(key)
+	var rim := OmniLight3D.new()
+	rim.position = Vector3(-8, 7, 4)
+	rim.omni_range = 22.0
+	rim.light_energy = 4.0
+	rim.light_color = Color("#6d82a4")
+	add_child(rim)
+	var warm := OmniLight3D.new()
+	warm.position = Vector3(8, 5, -5)
+	warm.omni_range = 17.0
+	warm.light_energy = 3.0
+	warm.light_color = Color("#a66b53")
+	add_child(warm)
+	var world_env := WorldEnvironment.new()
+	var env := Environment.new()
+	env.background_mode = Environment.BG_COLOR
+	env.background_color = Color("#0b1017")
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color("#9aa9bf")
+	env.ambient_light_energy = 0.48
+	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	world_env.environment = env
+	add_child(world_env)
+	_build_arena()
+	camera.position = Vector3(0, 20.5, 18.5)
+	camera.fov = 48
+	camera.look_at(Vector3.ZERO, Vector3.UP)
+	add_child(camera)
+
+func _build_arena() -> void:
+	_add_box(Vector3(0, -0.62, 0), Vector3(30, 0.25, 30), Color("#11161d"))
+	for z in [-12.0, 12.0]:
+		_add_gate(Vector3(0, 0, z))
+	for x in [-12.0, 12.0]:
+		for z in [-8.0, -2.5, 2.5, 8.0]:
+			_add_lantern(Vector3(x, 0, z))
+	for x in [-7.5, 7.5]:
+		for z in [-11.4, 11.4]:
+			_add_box(Vector3(x, 2.0, z), Vector3(1.2, 2.4, 0.08), Color("#693f42") if z > 0 else Color("#435a78"))
+
+func _add_gate(origin: Vector3) -> void:
+	for x in [-3.4, 3.4]:
+		_add_box(origin + Vector3(x, 2.0, 0), Vector3(0.48, 4.4, 0.48), Color("#3a2526"))
+	_add_box(origin + Vector3(0, 4.0, 0), Vector3(8.4, 0.42, 0.62), Color("#3a2526"))
+	_add_box(origin + Vector3(0, 4.46, 0), Vector3(9.2, 0.22, 0.85), Color("#3a2526"))
+
+func _add_lantern(origin: Vector3) -> void:
+	var post := MeshInstance3D.new()
+	var post_mesh := CylinderMesh.new()
+	post_mesh.top_radius = 0.06
+	post_mesh.bottom_radius = 0.08
+	post_mesh.height = 2.0
+	post.mesh = post_mesh
+	post.position = origin + Vector3(0, 0.6, 0)
+	post.material_override = _mat(Color("#292d32"), 0.75)
+	add_child(post)
+	var lamp := MeshInstance3D.new()
+	var lamp_mesh := BoxMesh.new()
+	lamp_mesh.size = Vector3(0.42, 0.58, 0.42)
+	lamp.mesh = lamp_mesh
+	lamp.position = origin + Vector3(0, 1.55, 0)
+	var glow := _mat(Color("#e5b96a"), 0.38)
+	glow.emission_enabled = true
+	glow.emission = Color("#d99d42")
+	glow.emission_energy_multiplier = 1.8
+	lamp.material_override = glow
+	add_child(lamp)
+
+func _add_box(pos: Vector3, size: Vector3, color: Color) -> void:
+	var node := MeshInstance3D.new()
+	var mesh := BoxMesh.new()
+	mesh.size = size
+	node.mesh = mesh
+	node.position = pos
+	node.material_override = _mat(color, 0.75)
+	add_child(node)
+
+func _mat(color: Color, roughness: float) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.roughness = roughness
+	return material
 
 func _setup_ui() -> void:
 	var canvas := CanvasLayer.new()
 	add_child(canvas)
-	var left := PanelContainer.new()
-	left.position = Vector2(18,18)
-	left.size = Vector2(340,650)
-	canvas.add_child(left)
+	var left := _panel(Vector2(18, 18), Vector2(340, 650), canvas)
 	var left_box := VBoxContainer.new()
 	left_box.add_theme_constant_override("separation", 8)
 	left.add_child(left_box)
@@ -64,24 +131,14 @@ func _setup_ui() -> void:
 	title.text = "BATTLEBOARD // ASSEMBLY"
 	title.add_theme_font_size_override("font_size", 20)
 	left_box.add_child(title)
+	var version := Label.new()
+	version.text = VERSION
+	version.modulate = Color("#97a6ba")
+	left_box.add_child(version)
 	left_box.add_child(roster_label)
 	left_box.add_child(HSeparator.new())
 	left_box.add_child(detail_label)
-	left_box.add_child(HSeparator.new())
-	var roster_title := Label.new()
-	roster_title.text = "ROSTER / POSITION"
-	roster_title.add_theme_font_size_override("font_size", 16)
-	left_box.add_child(roster_title)
-	var roster_scroll := ScrollContainer.new()
-	roster_scroll.custom_minimum_size = Vector2(320,300)
-	left_box.add_child(roster_scroll)
-	roster_box = VBoxContainer.new()
-	roster_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	roster_scroll.add_child(roster_box)
-	var right := PanelContainer.new()
-	right.position = Vector2(965,18)
-	right.size = Vector2(295,560)
-	canvas.add_child(right)
+	var right := _panel(Vector2(965, 18), Vector2(295, 560), canvas)
 	var right_box := VBoxContainer.new()
 	right.add_child(right_box)
 	var recruit_title := Label.new()
@@ -89,28 +146,68 @@ func _setup_ui() -> void:
 	recruit_title.add_theme_font_size_override("font_size", 18)
 	right_box.add_child(recruit_title)
 	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(275,500)
+	scroll.custom_minimum_size = Vector2(275, 500)
 	right_box.add_child(scroll)
 	candidate_box = VBoxContainer.new()
 	candidate_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(candidate_box)
-	encounter_label.position = Vector2(330,20)
-	encounter_label.size = Vector2(620,70)
+	encounter_label.position = Vector2(350, 18)
+	encounter_label.size = Vector2(590, 100)
 	encounter_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	encounter_label.add_theme_font_size_override("font_size", 17)
 	canvas.add_child(encounter_label)
+	var hint := Label.new()
+	hint.position = Vector2(395, 665)
+	hint.size = Vector2(500, 40)
+	hint.text = "TACTICAL: click fighter → highlighted square    DIRECT: WASD / Click / Q / E / Shift"
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.modulate = Color("#b7c1ce")
+	canvas.add_child(hint)
+
+func _panel(pos: Vector2, size: Vector2, parent: Node) -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.position = pos
+	panel.size = size
+	parent.add_child(panel)
+	return panel
 
 func _seed_demo_board() -> void:
 	var hana := recruitment.recruit("hana")
 	var ren := recruitment.recruit("ren")
-	roster.assign("hana","knight")
-	roster.assign("ren","pawn")
-	board.add_profile(hana, Vector2i(1,1), "player", "knight")
-	board.add_profile(ren, Vector2i(2,1), "player", "pawn")
-	var rival_a := BBProfile.from_dictionary({"id":"rival_rook","name":"Iron Ward","level":5,"stats":{"power":70,"guard":82,"speed":38,"technique":58},"aptitudes":{"rook":90},"predispositions":["disciplined","protective"],"experiences":["city_league"]})
-	var rival_b := BBProfile.from_dictionary({"id":"rival_bishop","name":"Glass Sage","level":5,"stats":{"power":48,"guard":45,"speed":62,"technique":86},"aptitudes":{"bishop":92},"predispositions":["analytical","patient"],"experiences":["academy_league"]})
-	board.add_profile(rival_a, Vector2i(4,4), "rival", "rook")
-	board.add_profile(rival_b, Vector2i(6,5), "rival", "bishop")
+	roster.assign("hana", "knight")
+	roster.assign("ren", "pawn")
+	board.add_profile(hana, Vector2i(1, 1), "player", "knight")
+	board.add_profile(ren, Vector2i(2, 1), "player", "pawn")
+	var ward := _rival("iron_ward", "Iron Ward", "Arena Guard", 78, 52, 60, 84)
+	var sage := _rival("glass_sage", "Glass Sage", "House Arcanist", 48, 82, 69, 46)
+	board.add_profile(ward, Vector2i(2, 3), "rival", "knight")
+	board.add_profile(sage, Vector2i(5, 5), "rival", "bishop")
+	encounter_label.text = "Select Hana, then Iron Ward. Ren begins adjacent for an affinity intervention."
+
+func _rival(id: String, name: String, background: String, power: float, technique: float, speed: float, defense: float) -> BBProfile:
+	return BBProfile.from_dictionary({
+		"id": id, "name": name, "background": background, "level": 9,
+		"stats": {"power": power, "technique": technique, "speed": speed, "defense": defense},
+		"aptitudes": {"pawn": 50, "knight": 72, "bishop": 72, "rook": 72, "queen": 60, "king": 60},
+		"predispositions": ["disciplined"], "experiences": ["league_match"], "traits": [], "relationships": {}
+	})
+
+func _on_challenge(initiator_id: String, counterpart_id: String, destination: Vector2i) -> void:
+	var context := BBEncounterContext.new(initiator_id, counterpart_id, destination)
+	var supports := board.active_support(initiator_id)
+	if not supports.is_empty():
+		var best: Dictionary = supports[0]
+		context.initiator_support.append(str(best["profile_id"]))
+		context.affinity_snapshot = {
+			"supporter_id": str(best["profile_id"]),
+			"support_bonus": maxf(0.0, float(best["affinity"]["score"]) * 0.04),
+			"resonance": str(best["affinity"]["resonance"]),
+		}
+	encounter.start(context, board, camera)
+
+func _on_encounter_resolved(winner_id: String, loser_id: String, destination: Vector2i) -> void:
+	board.resolve_challenge(winner_id, loser_id, destination)
+	_refresh_ui()
 
 func _on_recruited(profile: BBProfile) -> void:
 	roster.add_profile(profile)
@@ -118,107 +215,45 @@ func _on_recruited(profile: BBProfile) -> void:
 
 func _on_selection(profile_id: String) -> void:
 	if profile_id == "":
-		detail_label.text = "Select one of your deployed members.\nGreen = legal move · Red = challenge"
+		detail_label.text = "Select a fighter to inspect board role and affinity."
 		return
-	var p := board.profile(profile_id)
-	var role := board.state.role_of(profile_id)
-	var support := board.active_support(profile_id)
-	var lines := ["%s // %s" % [p.display_name, role.to_upper()], "Aptitude: %d" % roundi(p.aptitude_for(role)), ""]
-	if support.is_empty(): lines.append("No active nearby affinity")
-	for row in support:
-		var other := board.profile(row["profile_id"])
-		var a: Dictionary = row["affinity"]
-		lines.append("%s: %s (%+d)" % [other.display_name, a["resonance"], roundi(a["score"])])
-	detail_label.text = "\n".join(lines)
-
-func _on_challenge(initiator_id: String, counterpart_id: String, destination: Vector2i) -> void:
-	var context := BBEncounterContext.new(initiator_id, counterpart_id, destination)
-	var support := board.active_support(initiator_id)
-	var total := 0.0
-	for row in support:
-		total += maxf(0.0, float(row["affinity"].score)) * 0.03
-	context.affinity_snapshot = {"support_bonus": minf(total, 6.0)}
-	encounter.start(context, board, camera)
-
-func _on_encounter_resolved(winner_id: String, loser_id: String, destination: Vector2i) -> void:
-	board.resolve_challenge(winner_id, loser_id, destination)
-	_refresh_ui()
+	var profile := board.profile(profile_id)
+	if profile == null: return
+	detail_label.text = "%s\n%s\nRole: %s\nCell: %s\nAptitude: %d" % [profile.display_name, profile.background, board.state.role_of(profile_id).capitalize(), board.profile_cell(profile_id), roundi(profile.aptitude_for(board.state.role_of(profile_id)))]
 
 func _refresh_ui() -> void:
-	roster_label.text = "QUALIFICATION BOARD\nAssigned: %d / 16\nRoster: %d / 16\nGoal: assemble and certify a full board." % [roster.assignments.size(), roster.roster.size()]
-	for child in roster_box.get_children(): child.queue_free()
-	for profile_id in roster.roster.keys():
-		var p: BBProfile = roster.roster[profile_id]
-		var row := VBoxContainer.new()
-		var label := Label.new()
-		if roster.assignments.has(profile_id):
-			label.text = "%s // %s" % [p.display_name, str(roster.assignments[profile_id]).to_upper()]
-			row.add_child(label)
-		else:
-			label.text = p.display_name
-			row.add_child(label)
-			var roles := OptionButton.new()
-			for role in ["pawn","knight","bishop","rook","queen","king"]:
-				roles.add_item("%s  %d" % [role.capitalize(), roundi(p.aptitude_for(role))])
-				roles.set_item_metadata(roles.item_count-1, role)
-			row.add_child(roles)
-			var deploy := Button.new()
-			deploy.text = "Assign & Deploy"
-			deploy.pressed.connect(func(id=profile_id, picker=roles): _assign_and_deploy(id, str(picker.get_item_metadata(picker.selected))))
-			row.add_child(deploy)
-		row.add_child(HSeparator.new())
-		roster_box.add_child(row)
+	roster_label.text = "QUALIFICATION BOARD  %d / 16\n%s" % [roster.roster.size(), roster.qualification_summary()]
 	for child in candidate_box.get_children(): child.queue_free()
 	for candidate in recruitment.candidates():
 		var card := VBoxContainer.new()
 		var name := Label.new()
-		name.text = "%s  // Lv.%d" % [candidate.display_name, candidate.level]
+		name.text = "%s // Lv.%d" % [candidate.display_name, candidate.level]
 		name.add_theme_font_size_override("font_size", 16)
 		card.add_child(name)
 		var summary := Label.new()
-		summary.text = _candidate_summary(candidate) + "\n" + _chemistry_projection(candidate)
+		summary.text = _candidate_summary(candidate)
 		summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		card.add_child(summary)
 		var button := Button.new()
 		button.text = "Recruit"
-		button.pressed.connect(func(id=candidate.profile_id): recruitment.recruit(id))
+		button.pressed.connect(func(id = candidate.profile_id): recruitment.recruit(id))
 		card.add_child(button)
 		card.add_child(HSeparator.new())
 		candidate_box.add_child(card)
 
-func _candidate_summary(p: BBProfile) -> String:
+func _candidate_summary(profile: BBProfile) -> String:
 	var best_role := "pawn"
 	var best_score := -1.0
-	for role in p.aptitudes.keys():
-		var score := p.aptitude_for(role)
+	for role in profile.aptitudes.keys():
+		var score := profile.aptitude_for(role)
 		if score > best_score:
 			best_score = score
 			best_role = role
-	return "%s\nBest fit: %s %d\nPredisposition: %s" % [p.background, best_role.capitalize(), roundi(best_score), ", ".join(p.predispositions)]
-
-func _assign_and_deploy(profile_id: String, role: String) -> void:
-	if not roster.assign(profile_id, role):
-		encounter_label.text = "That board position is already full or unavailable."
-		return
-	var p: BBProfile = roster.roster[profile_id]
-	if board.profile(profile_id) == null:
-		var cell := _next_home_cell()
-		if cell.x < 0:
-			encounter_label.text = "No deployment cell is open."
-			return
-		board.add_profile(p, cell, "player", role)
-	encounter_label.text = "%s assigned as %s." % [p.display_name, role.capitalize()]
-	_refresh_ui()
-
-func _next_home_cell() -> Vector2i:
-	for y in range(0,3):
-		for x in range(0,8):
-			var cell := Vector2i(x,y)
-			if board.state.occupant(cell) == "": return cell
-	return Vector2i(-1,-1)
+	return "%s\nBest fit: %s %d\n%s" % [profile.background, best_role.capitalize(), roundi(best_score), _chemistry_projection(profile)]
 
 func _chemistry_projection(candidate: BBProfile) -> String:
-	var best_name := "No roster history yet"
+	if roster.roster.is_empty(): return "Chemistry: unknown"
+	var best_name := ""
 	var best_score := -999.0
 	var resonance := "Neutral"
 	for other in roster.roster.values():
@@ -227,5 +262,4 @@ func _chemistry_projection(candidate: BBProfile) -> String:
 			best_score = float(result["score"])
 			best_name = other.display_name
 			resonance = str(result["resonance"])
-	if best_score <= -999.0: return best_name
 	return "Best chemistry: %s // %s (%+d)" % [best_name, resonance, roundi(best_score)]
